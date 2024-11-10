@@ -4,7 +4,7 @@ const cron = require('node-cron');
 const fs = require('fs');
 const path = require('path');
 
-// Carregar variáveis de ambiente
+// Load environment variables
 const {
     NOTION_TOKEN,
     NOTION_DATABASE_ID,
@@ -14,7 +14,7 @@ const {
     CRON_SCHEDULE
 } = process.env;
 
-// Configurar cabeçalhos do Notion e Habitica
+// Configure headers for Notion and Habitica
 const headersNotion = {
     "Authorization": `Bearer ${NOTION_TOKEN}`,
     "Content-Type": "application/json",
@@ -25,13 +25,13 @@ const headersHabitica = {
     "x-api-key": HABITICA_API_KEY
 };
 
-// Pasta para backups de JSON
+// Folder for JSON backups
 const dataDir = path.join(__dirname, 'data');
 if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir);
 }
 
-// Função para escrever arquivos JSON com tratamento de erro
+// Function to write JSON files with error handling
 function writeJsonBackup(filename, data) {
     const filepath = path.join(dataDir, filename);
     try {
@@ -45,14 +45,14 @@ function writeJsonBackup(filename, data) {
 // Completed status
 const completed = () => 'Done';
 // Deleted status
-const canceled = () =>'Canceled';
+const canceled = () => 'Canceled';
 const archived = () => 'Archived';
 // Creation status
 const todo = () => 'To Do';
 const backlog = () => 'BackLog';
 const inprogress = () => 'In progress';
 
-// Funções para integração com Notion e Habitica
+// Functions for Notion and Habitica integration
 async function readDatabaseOfNotion() {
     const url = `https://api.notion.com/v1/databases/${NOTION_DATABASE_ID}/query`;
     try {
@@ -163,7 +163,7 @@ async function scoreTaskInNotion(id) {
     }
 }
 
-// Sincronização Notion para Habitica
+// Sync Notion to Habitica
 async function syncNotionToHabitica() {
     console.log('Syncing Notion to Habitica...');
     const habiticaTodoList = await readHabiticaData();
@@ -188,10 +188,9 @@ async function syncNotionToHabitica() {
             }
         }
     }
-
 }
 
-// Sincronização Habitica para Notion
+// Sync Habitica to Notion
 async function syncHabiticaToNotion() {
     console.log('Syncing Habitica to Notion...');
     const habiticaDoneList = await readHabiticaDoneData();
@@ -206,17 +205,17 @@ async function syncHabiticaToNotion() {
     }
 }
 
-// Função principal para leitura e sincronização
+// Main function to read and sync tasks
 async function syncTasks() {
     console.log('Reading and syncing data...');
     await syncNotionToHabitica();
     //await syncHabiticaToNotion();
 }
 
-// Executa imediatamente ao iniciar
+// Run immediately on startup
 syncTasks();
 
-// Agendamento da sincronização usando o cron
+// Schedule sync using cron
 cron.schedule(CRON_SCHEDULE, () => {
     console.log("Running scheduled sync...");
     syncTasks();
