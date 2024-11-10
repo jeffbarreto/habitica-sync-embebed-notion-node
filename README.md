@@ -1,5 +1,5 @@
 # Habitica & Notion Sync Integration
-# This project allows seamless synchronization between tasks in Habitica and Notion using Node.js. With this, you can keep your tasks aligned across both platforms, with automated updates using cron jobs.
+This project allows seamless synchronization between tasks in Habitica and Notion using Node.js. With this, you can keep your tasks aligned across both platforms, with automated updates using cron jobs.
 
 ## Prerequisites
 To run this project, make sure you have:
